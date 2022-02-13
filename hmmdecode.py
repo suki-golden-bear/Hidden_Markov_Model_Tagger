@@ -12,7 +12,7 @@ class HMMDecode:
             #max_prob holds maximum probability for PoS under consideration
             max_prob = 0
 
-            term3 = 1 #Placeholder value
+            term3 = 0 #Placeholder value
             token_idx = -1
 
             if unknown_token in idx_of_token:
@@ -30,6 +30,7 @@ class HMMDecode:
                 #TERM 2 is already smothed from hmm-model
                 term2 = transition_matrix[index+1][idx+1]
 
+                #Adds logarithms to prevent underflow error
                 cur_prob = term1 + term2 + term3
                 curr[idx] = max(curr[idx],cur_prob) if 0!=term2 else curr[idx]
 
