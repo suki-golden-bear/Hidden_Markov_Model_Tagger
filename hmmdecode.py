@@ -1,5 +1,6 @@
 #Author: Suki Sahota
 import math
+from random import randrange
 
 class HMMDecode:
 
@@ -30,19 +31,27 @@ class HMMDecode:
 
                 #Adds logarithms to prevent underflow error
                 cur_prob = term1 + term2 + term3
-                curr[idx] = max(curr[idx],cur_prob) if 0!=term2 else curr[idx]
+
+                max_prob = cur_prob
+                if 0 == cur_prob:
+                    max_prob = curr[idx]
+
+                curr[idx] = max_prob
+                #curr[idx] = max(curr[idx],cur_prob) if 0!=term2 else curr[idx]
 
     @staticmethod
     def find_tag_with_max(curr, pos_by_idx):
         max_idx = -1
         max_prob = -math.inf
-        for idx, prob in enumerate(curr):
+        for idx, prob in enumerate(curr, start=1):
             if 0 != prob and prob > max_prob:
                 max_idx = idx
                 max_prob = prob
 
         #Returns first PoS in our records if all probabilities are 0
-        return pos_by_idx[max_idx] if -1 != max_idx else pos_by_idx[1]
+        return pos_by_idx[max_idx] \
+            if -1 != max_idx \
+            else pos_by_idx[randrange(1, len(pos_by_idx) + 1)]
 
 ###Driver code###
 import sys
@@ -57,8 +66,8 @@ token_by_idx = dict()
 
 num_data = -1
 
-transition_matrix = [[]]
-emission_matrix = [[]]
+transition_matrix = []
+emission_matrix = []
 
 with open('hmmmodel.txt', 'r') as model_file:
     num_data = model_file.readline().strip()
@@ -87,7 +96,7 @@ with open('hmmmodel.txt', 'r') as model_file:
     #Read in emission matrix column headers
     for idx, token in enumerate(model_file.readline().split(), start=1):
         token = token[:-1]
-        idx_of_token[token] = idx-1
+        idx_of_token[token] = idx
         token_by_idx[idx-1] = token
 
     #Read in contents of emission matrix
@@ -102,7 +111,9 @@ with open('hmmmodel.txt', 'r') as model_file:
     assert not model_file.readline(), 'There is still more to read from file.'
 
 #print('DEBUGGER: ')
+#print(idx_of_pos)
 #print(transition_matrix)
+#print(idx_of_token)
 #print(emission_matrix)
 
 with open('hmmoutput.txt', 'w') as outfile:
@@ -114,7 +125,12 @@ with open('hmmoutput.txt', 'w') as outfile:
             for unknown_token in line.split():
                 HMMDecode.process_token(prev, curr, unknown_token, \
                     idx_of_token, transition_matrix, emission_matrix)
+
                 my_tag = HMMDecode.find_tag_with_max(curr, pos_by_idx)
                 print(unknown_token + '/' + my_tag, file=outfile, end=' ')
+
+                #Update prev with curr's values
+                prev = curr
+
             print(file=outfile)
 #################
