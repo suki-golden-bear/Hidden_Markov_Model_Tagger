@@ -22,9 +22,11 @@ class HMMDecode:
             #Innerloop iterates over previous column of probabilities
             for index, old_prob in enumerate(prev):
                 term1 = prev[index] #TERM 1 FROM EQN
+                '''
                 if 0 == term1:
                     #Previous markov chain is 0; no need to continue it
                     continue
+                '''
 
                 #Already smothed from hmm-model
                 term2 = transition_matrix[index+1][idx+1] #TERM 2 from EQN
