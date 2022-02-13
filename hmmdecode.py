@@ -46,7 +46,7 @@ class HMMDecode:
                 max_idx = idx
                 max_prob = prob
 
-        #Returns first PoS in our records if all probabilities are 0
+        #Returns random PoS if all probabilities are tied for 0
         return pos_by_idx[max_idx] \
             if -1 != max_idx \
             else pos_by_idx[randrange(1, len(pos_by_idx) + 1)]
