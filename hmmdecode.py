@@ -34,12 +34,8 @@ class HMMDecode:
                 #Adds logarithms to prevent underflow error
                 cur_prob = term1 + term2 + term3
 
-                max_prob = cur_prob
-                if 0 == cur_prob:
-                    max_prob = curr[idx]
-
-                curr[idx] = max_prob
-                #curr[idx] = max(curr[idx],cur_prob) if 0!=term2 else curr[idx]
+                #Update curr column
+                curr[idx] = cur_prob if 0 != cur_prob else curr[idx]
 
     @staticmethod
     def find_tag_with_max(curr, pos_by_idx):
