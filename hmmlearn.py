@@ -64,6 +64,7 @@ class HMMLearn:
                     #One-smoothing only for states, not observations
                     probability += 1
                 probability = column / num_data
+                #Need to keep 0 probability for easy computation in hmm-decode
                 if 0 != probability:
                     probabilty = math.log(probability)
                 print(probability, file=file, end=', ')
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     tokens = dict() #key:token, value:idx in emission matrix
     num_data = 0
     
-    #First row and column in each matrix is "initialization" vector
+    #First row and column in each matrix are "initialization" vectors
     #ROWS: Parts of Speech, COLUMNS: Parts of Speech
     transition_matrix = [[0]]
     #ROWS: Parts of Speech, COLUMNS: observations
@@ -101,6 +102,7 @@ if __name__ == '__main__':
                 else:
                     tag_idx = len(transition_matrix)
                     parts_of_speech[tag] = tag_idx
+                    #Add new PoS to both matrices
                     HMMLearn.add_pos_to_matrices(
                         transition_matrix, emission_matrix, \
                         prev_tag_idx, tag_idx)
@@ -111,6 +113,7 @@ if __name__ == '__main__':
                 else:
                     token_idx = len(emission_matrix[0])
                     tokens[token] = token_idx
+                    #Add new word to emission matrix
                     HMMLearn.add_token_to_matrix(emission_matrix, token_idx)
     
                 #Increment count of tag
@@ -129,13 +132,11 @@ if __name__ == '__main__':
     
         #Print transition matrix
         HMMLearn.print_col_headings(model_file, parts_of_speech)
-        #Print body of matrix
         HMMLearn.print_body_matrix(
             model_file, num_data, transition_matrix, True)
     
         #Print emission matrix
         HMMLearn.print_col_headings(model_file, tokens)
-        #Print body of matrix
         HMMLearn.print_body_matrix(
             model_file, num_data, emission_matrix, False)
 #################

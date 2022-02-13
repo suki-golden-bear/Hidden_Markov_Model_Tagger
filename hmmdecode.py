@@ -22,11 +22,6 @@ class HMMDecode:
             #Innerloop iterates over previous column of probabilities
             for index, old_prob in enumerate(prev):
                 term1 = prev[index] #TERM 1 FROM EQN
-                '''
-                if 0 == term1:
-                    #Previous markov chain is 0; no need to continue it
-                    continue
-                '''
 
                 #Already smothed from hmm-model
                 term2 = transition_matrix[index+1][idx+1] #TERM 2 from EQN
@@ -99,7 +94,7 @@ with open('hmmmodel.txt', 'r') as model_file:
         token_by_idx[idx-1] = token
 
     #Read in contents of emission matrix
-    for i in range(len(idx_of_pos)+1): #lso reads in first row for 'IV'
+    for i in range(len(idx_of_pos)+1): #Also reads in first row for 'IV'
         emission_matrix.append([])
         line = next(model_file).strip()
         for raw_probability in line.split():
@@ -109,14 +104,7 @@ with open('hmmmodel.txt', 'r') as model_file:
 
     assert not model_file.readline(), 'There is still more to read from file.'
 
-#print('DEBUGGER: ')
-#print(idx_of_pos)
-#print(transition_matrix)
-#print(idx_of_token)
-#print(emission_matrix)
-
 with open('hmmoutput.txt', 'w') as outfile:
-    #Maybe probability of 1 can be zero in the beginning??
     prev = [1] * len(idx_of_pos)
     curr = [-math.inf] * len(idx_of_pos)
     with open(input_path, 'r') as f:
