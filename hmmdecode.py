@@ -35,7 +35,8 @@ class HMMDecode:
                 cur_prob = term1 + term2 + term3
 
                 #Update curr column
-                curr[idx] = cur_prob if 0 != cur_prob else curr[idx]
+                if 0 != cur_prob:
+                    curr[idx] = cur_prob
 
     @staticmethod
     def find_tag_with_max(curr, pos_by_idx):
