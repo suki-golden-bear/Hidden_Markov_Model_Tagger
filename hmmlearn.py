@@ -70,7 +70,7 @@ class HMMLearn:
         file.write('\n')
 
 ###Driver code###
-if '__name__' == '__main__':
+if __name__ == '__main__':
     import sys
     
     input_path = sys.argv[1]
