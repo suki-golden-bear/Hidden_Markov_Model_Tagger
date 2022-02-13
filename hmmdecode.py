@@ -9,8 +9,6 @@ class HMMDecode:
 
         #Outerloop iterates over current column of probabilities
         for idx, prob in enumerate(curr):
-            #max_prob holds maximum probability for PoS under consideration
-            max_prob = 0
 
             term3 = 0 #Placeholder value
             token_idx = -1
@@ -27,8 +25,8 @@ class HMMDecode:
                     #Previous markov chain is 0; no need to continue it
                     continue
 
-                #TERM 2 is already smothed from hmm-model
-                term2 = transition_matrix[index+1][idx+1]
+                #Already smothed from hmm-model
+                term2 = transition_matrix[index+1][idx+1] #TERM 2 from EQN
 
                 #Adds logarithms to prevent underflow error
                 cur_prob = term1 + term2 + term3
