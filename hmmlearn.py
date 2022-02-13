@@ -61,8 +61,11 @@ class HMMLearn:
             for column in row:
                 probability = column
                 if True == is_trans_mat:
+                    #One-smoothing only for states, not observations
                     probability += 1
                 probability = column / num_data
+                if 0 != probability:
+                    probabilty = math.log(probability)
                 print(probability, file=file, end=', ')
         file.write('\n')
 
@@ -77,7 +80,9 @@ if '__name__' == '__main__':
     num_data = 0
     
     #First row and column in each matrix is "initialization" vector
+    #ROWS: Parts of Speech, COLUMNS: Parts of Speech
     transition_matrix = [[0]]
+    #ROWS: Parts of Speech, COLUMNS: observations
     emission_matrix = [[0]]
     
     with open(input_path, 'r') as f:
@@ -86,7 +91,9 @@ if '__name__' == '__main__':
             for token_tag in line.split():
                 token, tag = HMMLearn.grab_token_tag(token_tag.strip())
     
-                prev_tag_idx = 0 if prev_tag == None else parts_of_speech[prev_tag]
+                prev_tag_idx = 0
+                if prev_tag != None:
+                    prev_tag_idx = parts_of_speech[prev_tag]
     
                 tag_idx = -1
                 if tag in parts_of_speech:
@@ -95,7 +102,8 @@ if '__name__' == '__main__':
                     tag_idx = len(transition_matrix)
                     parts_of_speech[tag] = tag_idx
                     HMMLearn.add_pos_to_matrices(
-                        transition_matrix, emission_matrix, prev_tag_idx, tag_idx)
+                        transition_matrix, emission_matrix, \
+                        prev_tag_idx, tag_idx)
     
                 token_idx = -1
                 if token in tokens:
@@ -122,10 +130,12 @@ if '__name__' == '__main__':
         #Print transition matrix
         HMMLearn.print_col_headings(model_file, parts_of_speech)
         #Print body of matrix
-        HMMLearn.print_body_matrix(model_file, num_data, transition_matrix, True)
+        HMMLearn.print_body_matrix(
+            model_file, num_data, transition_matrix, True)
     
         #Print emission matrix
         HMMLearn.print_col_headings(model_file, tokens)
         #Print body of matrix
-        HMMLearn.print_body_matrix(model_file, num_data, emission_matrix, False)
+        HMMLearn.print_body_matrix(
+            model_file, num_data, emission_matrix, False)
 #################
