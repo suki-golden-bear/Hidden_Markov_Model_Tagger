@@ -64,9 +64,7 @@ class HMMLearn:
                     #One-smoothing only for states, not observations
                     probability += 1
                 probability = column / num_data
-                #Need to keep 0 probability for easy computation in hmm-decode
-                if 0 != probability:
-                    probabilty = math.log(probability)
+                
                 print(probability, file=file, end=', ')
         file.write('\n')
 
