@@ -100,13 +100,14 @@ with open('hmmmodel.txt', 'r') as model_file:
         for raw_probability in line.split():
             probability = raw_probability.strip()
             probability = float(probability[:-1])
+            assert probability >= 0, 'Oops, emission matrix has neg prob'
             emission_matrix[len(emission_matrix)-1].append(probability)
 
     assert not model_file.readline(), 'There is still more to read from file.'
 
 with open('hmmoutput.txt', 'w') as outfile:
     prev = [1] * len(idx_of_pos)
-    curr = [-math.inf] * len(idx_of_pos)
+    curr = [0] * len(idx_of_pos)
     with open(input_path, 'r') as f:
         for line in f:
             for unknown_token in line.split():
